@@ -69,7 +69,7 @@ async def get_student_credit_updates(student_name: str):
 
 
 @router.get('/{student_name}/credit', name='获取学生积分', response_model=float)
-async def get_student_credit(student_name: str):
+async def get_student_credit(student_name: str) -> float:
     student = await engine.find_one(Student, Student.name == student_name)
 
     if student is None:
@@ -84,4 +84,4 @@ async def get_student_credit(student_name: str):
 
     credit_sum = add_sum + reduce_sum
 
-    return credit_sum
+    return float(credit_sum)

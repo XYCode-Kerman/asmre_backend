@@ -1,3 +1,4 @@
+import asyncio
 from typing import List
 
 from bson import ObjectId
@@ -12,16 +13,29 @@ router = APIRouter(prefix="/student", tags=["学生管理"])
 
 @router.get('/', name="获取学生列表", response_model=List[Student])
 async def get_students():
-    return await engine.find(Student)
+    students = await engine.find(Student)
+
+    await asyncio.gather(*[student.compute_credit() for student in students], return_exceptions=True)
+
+    students.sort(key=lambda x: x.credit, reverse=True)
+
+    return students
 
 
 @router.get('/by/class/{class_id}', name="获取班级学生列表", response_model=List[Student])
 async def get_students_by_class(class_id: str):
-    return await engine.find(Student, Student.school_class == ObjectId(class_id))
+    students = await engine.find(Student, Student.school_class == ObjectId(class_id))
+
+    await asyncio.gather(*[student.compute_credit() for student in students], return_exceptions=True)
+
+    students.sort(key=lambda x: x.credit, reverse=True)
+
+    return students
 
 
 @router.post('/', name="创建学生", dependencies=[Depends(require_permission_depend('/asmre/student', 'create'))], response_model=Student, description='需要 `/asmre/student` 的 `create` 权限')
 async def create_student(student: Student):
+    await student.compute_credit()
     return await engine.save(student)
 
 
@@ -33,6 +47,8 @@ async def update_student(student_id: str, student_new: Student, user=Depends(get
 
     if student is None:
         raise HTTPException(status_code=404, detail="学生不存在")
+
+    await student.compute_credit()
 
     student.model_update(student_new, exclude=set('id'))
 

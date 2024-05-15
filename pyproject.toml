@@ -21,6 +21,7 @@ casbin-rabbitmq-watcher = "^1.3.0"
 casbin-sqlalchemy-adapter = "^1.1.0"
 pymysql = "^1.1.0"
 cryptography = "^42.0.7"
+cachetools = "^5.3.3"
 
 
 [tool.poetry.group.dev.dependencies]
