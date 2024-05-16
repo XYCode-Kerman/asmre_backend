@@ -33,6 +33,16 @@ async def get_students_by_class(class_id: str):
     return students
 
 
+@router.get('/by/name/{student_name}', name="获取同名学生", response_model=List[Student])
+async def get_students_by_name(student_name: str):
+    students = await engine.find(Student, Student.name == student_name)
+
+    await asyncio.gather(*[student.compute_credit() for student in students], return_exceptions=True)
+    students.sort(key=lambda x: x.credit, reverse=True)
+
+    return students
+
+
 @router.post('/', name="创建学生", dependencies=[Depends(require_permission_depend('/asmre/student', 'create'))], response_model=Student, description='需要 `/asmre/student` 的 `create` 权限')
 async def create_student(student: Student):
     await student.compute_credit()
