@@ -32,7 +32,11 @@ async def login(username: str, password: str, response: Response):
         exp=datetime.datetime.utcnow() + datetime.timedelta(days=15)
     ))
 
-    response.set_cookie('xyuan-token', token, httponly=True)
+    # response.set_cookie('xyuan-token', token, httponly=True)
+    response.headers.append(
+        key='Set-Cookie',
+        value=f'xyuan-token={token}; HttpOnly; Path=/; SameSite=none; Partitioned; Secure;'
+    )
 
     return token
 
