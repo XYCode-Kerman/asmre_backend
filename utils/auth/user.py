@@ -2,13 +2,13 @@ import hashlib
 
 import jwt
 from fastapi import Depends, HTTPException
-from fastapi.security.api_key import APIKeyCookie
+from fastapi.security.api_key import APIKeyHeader
 
 from config import SECRET
 from database import engine
 from models import TokenPayload, User
 
-apikey_schema = APIKeyCookie(name="xyuan-token", auto_error=True)
+apikey_schema = APIKeyHeader(name="X-Token", auto_error=True)
 
 
 async def generate_token(payload: TokenPayload):
