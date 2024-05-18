@@ -53,10 +53,8 @@ async def create_homework(homework: Homework):
 @router.put(
     '/{homework_id}',
     name='更新作业',
-    description='需要 `/asmre/homework` 的 `write` 权限',
+    description='需要 `/asmre/homework/{homework_id}` 的 `write` 权限',
     response_model=Homework,
-    dependencies=[
-        Depends(require_permission_depend('/asmre/homework', 'write'))]
 )
 async def update_homework(homework_id: str, new_homework: Homework, user=Depends(get_user)):
     await require_permission(f'/asmre/homework/{homework_id}', 'write', user)
