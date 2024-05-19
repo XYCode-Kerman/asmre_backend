@@ -4,7 +4,7 @@ from bson import ObjectId
 from fastapi import APIRouter, Depends, HTTPException
 
 from database import engine
-from models import Task
+from models import Student, Task
 from utils.auth.permission import require_permission, require_permission_depend
 from utils.auth.user import get_user
 
@@ -23,13 +23,25 @@ async def get_tasks():
 
 
 @router.get(
-    '/by/student/{student_id}',
-    name='根据学生获取任务',
+    '/by/student/id/{student_id}',
+    name='根据学生ID获取任务',
     description=DESCRIPTION_ABOUT_TASK,
     response_model=List[Task]
 )
-async def get_tasks_by_student(student_id: str):
+async def get_tasks_by_student_id(student_id: str):
     return await engine.find(Task, Task.student == ObjectId(student_id))
+
+
+@router.get(
+    '/by/student/name/{student_name}',
+    name='根据学生姓名获取任务',
+    description=DESCRIPTION_ABOUT_TASK,
+    response_model=List[Task]
+)
+async def get_tasks_by_student_name(student_name: str):
+    student = await engine.find_one(Student, Student.name == student_name)
+
+    return await engine.find(Task, Task.student == student.id)
 
 
 @router.get(
