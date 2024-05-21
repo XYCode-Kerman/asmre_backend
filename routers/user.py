@@ -22,7 +22,7 @@ async def register(user: User):
 @router.post('/login', name='登录', response_model=str)
 async def login(username: str, password: str, response: Response):
     password = hash_pwd(password)
-    user = await engine.find_one(User, User.username == username)
+    user = await engine.find_one(User, User.username == username and User.password == password)
 
     if user is None:
         raise HTTPException(status_code=400, detail='用户名或密码错误')
