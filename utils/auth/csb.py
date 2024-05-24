@@ -20,12 +20,7 @@ def watch_cb(msg):
 
 def create_default_policies():
     p = [
-        ['role_admin', '/policy', '(read|write|delete)'],
-        ['role_admin', '/role', '(read|write|delete)'],
-        ['role_admin', '/asmre/student', '(create|update|delete)'],
-        ['role_admin', '/asmre/student/:name',
-            '(create|update|delete)'],
-        ['role_admin', '/asmre/credit/:name', '(create|update|delete)'],
+        ['role_admin', '/*', '.*']
     ]
 
     enforcer.add_policies(p)
